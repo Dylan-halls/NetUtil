@@ -1,0 +1,11 @@
+Bind to tcp port 8008:
+    netutil -tcp -b 8008
+
+Connect to 192.168.0.14 on tcp port 8008:
+    netutil -tcp -c 192.168.0.14 8008
+
+Arpspoof 192.168.0.1 to you:
+    netutil -spoof -arp 192.168.0.1
+
+Dnspoof google.com to 192.168.0.14:
+    netutil -spoof -dns google.com 192.168.0.14
