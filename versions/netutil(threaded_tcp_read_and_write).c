@@ -4,18 +4,65 @@
 #include <pthread.h>
 #include <sys/socket.h>
 
-void *connection_handler(void *sockfd) {
+//void* buffer = malloc(63663);
+
+void *tcp_bind_recv_loop(void *socket_desc) {
   int read_size;
   char recvbuff[2000];
-  int sock = *(int*)sockfd;
+  int sock = *(int*)socket_desc;
 
-  while (1) {
-    read_size = recv(sock, recvbuff, 2000, 0)
-    
-    memset(recvbuff, 0, sizeof(recvbuff));
+  if ((read_size = recv(sock, recvbuff, 2000, 0)) > 0) {
+    printf("%s", recvbuff);
   }
 
   return 0;
+}
+
+void *tcp_bind_send_loop(void *socket_desc) {
+  char sendbuff[2000];
+  int sock = *(int*)socket_desc;
+
+  scanf("%s\n", sendbuff);
+  //printf("DEBUG --> %s\n", (char*)buffer);
+  write(sock, sendbuff, strlen(sendbuff));
+  //free(buffer);
+  return 0;
+}
+
+void *connection_handler(void *sockfd) {
+    int read_size;
+    int sock = *(int*)sockfd;
+    while(1) {
+      char recvbuff[2000];
+      //  pthread_t recv_thread;
+        pthread_t send_thread;
+
+        if(pthread_create(&send_thread, NULL, tcp_bind_send_loop, sockfd) < 0) {
+              perror("Error");
+              exit(-1);
+        }
+        /*
+        if(pthread_create(&recv_thread, NULL, tcp_bind_recv_loop, sockfd) < 0) {
+              perror("Error");
+              exit(-1);
+        }
+        */
+        if ((read_size = recv(sock, recvbuff, 2000, 0)) > 0) {
+          printf("%s", recvbuff);
+        }
+
+      memset(recvbuff, 0, sizeof(recvbuff));
+    }
+
+    /*
+    if(read_size == 0){
+        puts("Client disconnected");
+        fflush(stdout);
+    }
+    */
+
+    free(sockfd);
+    return 0;
 }
 
 void bind_tcp(const char *port){

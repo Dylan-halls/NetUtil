@@ -9,3 +9,5 @@ Arpspoof 192.168.0.1 to you:
 
 Dnspoof google.com to 192.168.0.14:
     netutil -spoof -dns google.com 192.168.0.14
+
+add ssl support
